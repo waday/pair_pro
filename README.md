@@ -1,5 +1,8 @@
 
-テストコマンドメモ
-bundle init
-bundle install
-rspec --init
+# テストコマンドメモ
+
+### bundle init
+
+### bundle install
+
+### rspec --init
