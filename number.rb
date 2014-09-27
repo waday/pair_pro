@@ -1,4 +1,4 @@
-class Number
+class Player
   attr_accessor :sum
 
   def initialize
@@ -23,14 +23,6 @@ class Number
     @sum += x
   end
 
-  def hit
-   cards = (1..10).to_a
-   cards << 'J'
-   cards << 'Q'
-   cards << 'K'
-   cards.sample
-  end
-
   def reset
     @sum = 0
   end
@@ -44,29 +36,40 @@ class Number
   end
 end
 
-player = Number.new
+class Game
+  def initialize
+    @player = Player.new
+    @master = Player.new
+    # ゲームの処理
 
-p hit_tmp = player.hit
-player.add(hit_tmp)
-p player.sum
-p player.judge
+    card = hit
+    p "#{card}をひいた"
+    @player.add(card)
+    card = hit
+    p "#{card}をひいた"
+    @player.add(card)
 
-p hit_tmp = player.hit
-player.add(hit_tmp)
-p player.sum
-p player.judge
+    @master.add(hit)
+    p 'ディーラーの片方の手札'
+    p @master.sum
+    @master.add(hit)
+    start
+  end
 
-p hit_tmp = player.hit
-player.add(hit_tmp)
-p player.sum
-p player.judge
+  def start
+    #loop
+    p '自分の手札の合計'
+    p @player.sum
 
-p hit_tmp = player.hit
-player.add(hit_tmp)
-p player.sum
-p player.judge
+  end
 
-p hit_tmp = player.hit
-player.add(hit_tmp)
-p player.sum
-p player.judge
+  def hit
+   cards = (1..10).to_a
+   cards << 'J'
+   cards << 'Q'
+   cards << 'K'
+   cards.sample
+  end
+
+end
+Game.new
