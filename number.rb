@@ -75,7 +75,7 @@ class Deck
 	def hit
 		card = @cards.shift
 		card
-  end
+	end
 end
 
 
