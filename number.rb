@@ -1,183 +1,226 @@
 class Player
-  attr_accessor :sum, :cards
-
-  def initialize
-    @sum = 0
-    @cards = []
+	attr_accessor :name
+  def initialize(name)
+		@cards = Array.new
+		@name = name
   end
 
   def add(card)
-    #x = card
-    #x = change(x)
-    #@sum += x
-    @cards << card
+		@cards.push(card)
   end
 
-  def calc
-    sum = 0
-    cards.each do |n|
-      sum += change(n, sum)
+  def reset
+    @cards = Array.new
+  end
+
+	def show_card_sum
+		card_sum = 0
+		@cards.each do |card|
+	  	case card
+	  		when 'J','Q','K'
+	  	  	add_num = 10
+				when '1'
+		      if @sum + 11 > 21
+		        add_num = 1
+		      else
+		        add_num = 11
+		      end
+				else
+					add_num = card
+	  	end
+	    card_sum += add_num
+		end
+		card_sum
+	end
+
+	def show_card(num=-1)
+		if num.to_i == -1
+			@cards[(@cards.length.to_i - 1)]
+		else
+			@cards[num]
+		end
+	end
+
+	def show_card_all
+		@cards
+	end
+
+  def judge
+		sum = show_card_sum.to_i
+    if sum > 21
+      'BURST'
+    else
+      'SAFE'
     end
-    @sum = sum
   end
-
-  #def judge
-  def burst?
-    if @sum > 21
-      true
-    end
-  end
-
-  def black_jack?
-    # Aと「10」または絵札の組み合わせが最も強い
-    cards.include?('A') and cards.one? {|c| ten?(c) }
-  end
-
-  private
-  def ten?(card)
-    case card
-    when 'J','Q','K',10
-      true
-    end
-  end
-
-  def change(card, sum)
-    case card
-    when 'J','Q','K'
-      card = 10
-    when 'A'
-      sum += 11
-      if sum > 21
-        card = 1
-      else
-        card = 11
-      end
-    end
-    card
-  end
-
 end
+
+class Deck
+	def initialize
+		@cards = Array.new
+		(1..10).each do |i|
+			@cards << i
+			@cards << i
+			@cards << i
+			@cards << i
+		end
+		Array['J','Q','K'].each do |i|
+			@cards << i
+			@cards << i
+			@cards << i
+			@cards << i
+		end
+		@cards.shuffle!
+	end
+  def hit
+		card = @cards.shift
+		card
+  end
+end
+
 
 class Game
-
-  # attr_accessor :stack
-
   def initialize
-    # 山札を減らす処理書くなら
-    # @stack = (2..10).to_a
-    # @stack << 'A'
-    # @stack << 'J'
-    # @stack << 'Q'
-    # @stack << 'K'
-
-    @player = Player.new # プレイヤー
-    @master = Player.new # ディーラー
-    # ゲームの処理
-
-    # プレイヤーの最初の行動
-    card = hit
-    puts "あなたは#{card}をひいた"
-    @player.add(card)
-    card = hit
-    puts "あなたは#{card}をひいた"
-    @player.add(card)
-    @player.calc
-
-    # ディーラーの行動
-    puts "ディーラーは2枚カードをひいた"
-    card = hit
-    @master.add(hit)
-    puts "ディーラーの片方の手札: #{ card }"
-    @master.add(hit)
-    @master.calc
-    start
+		@deck = Deck.new
+    @player = Player.new("YOU")
+    @master = Player.new("DEA")
+		@players = Array[@player, @master]
+    title
   end
+
+	def clear_disp
+		print "\033[2J"
+	end
+
+	def title
+
+		clear_disp
+
+		puts <<-'EOS'
+
+       　　　　―＼＼＼＼＼
+       　　―　　　　　　　　　｀｀
+       　／　　　　　　　　　　　　 ＼
+       　／　　　　　　　　　　　　　　ヽ
+       　／　　　　　　　　　　　　　　　し
+       　/|　　　　　　　　 /ルﾉﾙ　　　　ノ
+       　　|/|　　　　　　 /(O ) ﾉ　´ヽ　 彡
+       　　　|/|　　　 /|/＼　　/　|6/　 彡
+       　　　　|/|/|/く　　　＼|￣￣￣￣￣|
+       　　|￣￣ヽ　―‐　┌┘
+       　　|　　　　＼⌒ ＿|
+       　　　　　　　 ￣
+ ____  _        _    ____ _  __   _   _    ____ _  __
+| __ )| |      / \  / ___| |/ /  | | / \  / ___| |/ /
+|  _ \| |     / _ \| |   | ' /_  | |/ _ \| |   | ' / 
+| |_) | |___ / ___ \ |___| . \ |_| / ___ \ |___| . \ 
+|____/|_____/_/   \_\____|_|\_\___/_/   \_\____|_|\_\
+                                                      
+		EOS
+
+		puts 'PRESS ANY KEY TO START'
+    if gets
+			clear_disp
+			start
+		end
+	end
 
   def start
-    loop do
-      puts "自分の手札: #{ @player.cards.join(' ') }"
-      puts "* あなたの番 *"
-      puts '1:hit 2:stay'
-      cmd = gets.chomp.to_i
-      if cmd == 1
-        card = hit
-        puts "あなたは#{ card }をひいた"
-        @player.add(card)
-        @player.calc
-        # チェック
-        if @player.burst?
-          puts "自分の手札: #{ @player.cards.join(' ') } * 自分の手札の合計: #{ @player.sum }"
-          puts "あなたの負けてしまった..."
-          break
-        end
-      else
-        puts 'あなたはstayを選んだ'
-        puts '* ディーラーの番 *'
-        master_play
-        # チェック
-        if  @master.burst?
-          puts "ディーラーの手札: #{ @master.cards.join(' ') } * ディーラーの手札の合計: #{ @master.sum }"
-          puts "あなたはディーラーに勝利した！"
-          break
-        end
-        # 判定
-        puts "勝負！！"
-        puts "自分の手札: #{ @player.cards.join(' ') } * 自分の手札の合計: #{ @player.sum }"
-        puts "ディーラーの手札: #{ @master.cards.join(' ') } * ディーラーの手札の合計: #{ @master.sum }"
-        battle( @player, @master )
-        break
-      end
+		puts '-----------------------------'
+		puts 'カード配布'
+		puts '-----------------------------'
+		@player.add(@deck.hit)
+		@player.add(@deck.hit)
+		@master.add(@deck.hit)
+		@master.add(@deck.hit)
 
-    end
-  end
+		loop do
+			puts ''
+			puts '-----------------------------'
+			puts 'プレイヤーのターン'
+			puts '-----------------------------'
+	    puts "#{@master.name}:[#{@master.show_card(0)}, *]"
+    	puts "#{@player.name}:#{@player.show_card_all}(#{@player.show_card_sum})"
+			puts ''
+			puts 'hit or stay? (1:hit, 2:stay) :[2]'
+			cmd = gets.chomp.to_i
+			if cmd == 1
+				@player.add(@deck.hit)
+				puts "[info] #{@player.name}は#{@player.show_card}のカードを引きました"
+				puts ''
+			else
+				puts 'stay'
+				puts ''
+				break
+			end
+			check_burst @player
+		end
 
+		loop do
+			puts ''
+			puts '-----------------------------'
+			puts 'ディーラーのターン'
+			puts '-----------------------------'
+	    puts "#{@master.name}:#{@master.show_card_all}(#{@master.show_card_sum})"
+    	puts "#{@player.name}:#{@player.show_card_all}(#{@player.show_card_sum})"
+			if @master.show_card_sum.to_i <= 16
+				@master.add(@deck.hit)
+				puts "[info] #{@master.name}は#{@master.show_card}のカードを引きました"
+				puts ''
+			else 
+				puts 'stay'
+				puts ''
+				break
+			end
+			check_burst @master
+		end
 
-  def master_play
-    while @master.sum <= 16
-      #ディーラーは、カードの合計値が16以下の 場合は、引き続けなくてはならない
-      p "ディーラーは1枚カードをひいた"
-      @master.add(hit)
-      @master.calc
-    end
-    #ディーラーは、カードの合計値が17以上の 場合は、それ以上カードを引くことができない
-  end
+		match @players
 
-  def hit
-   cards = (2..10).to_a
-   cards << 'A'
-   cards << 'J'
-   cards << 'Q'
-   cards << 'K'
-   # 山札を減らす処理かく？
-   # card = cards.sample
-   # @stack.delete(card)
-   # card
-   cards.sample
-  end
+	end
 
-  def battle(player, master)
-    # カードの合計値が21に近い方が勝ち
-    if player.sum > master.sum
-      #
-      p "あなたはディーラーに勝利した！"
-    elsif player.sum == master.sum
-      # Aと「10」または絵札の組み合わせが最も強い
-      if player.black_jack? and master.black_jack?
-        p "引き分け"
-      elsif player.black_jack?
-        p "あなたはディーラーに勝利した！"
-      elsif master.black_jack?
-        p "あなたの負けてしまった..."
-      else
-        p "引き分け"
-      end
-    else
-      p "あなたの負けてしまった..."
-    end
+	def check_burst(player)
+		if player.judge == 'BURST'
+			puts "BURST!\s#{@player.show_card_all}(#{@player.show_card_sum})\n#{player.name} LOSE"
+			puts ''
+			match @players
+		end
+	end
 
-  end
+	def match(player)
+		puts '-----------------------------'
+		puts '勝敗結果'
+		puts '-----------------------------'
+
+		hiscore=0
+		winner = Array.new
+		@players.each do |player|
+			score = player.show_card_sum
+			if score <= 21
+				if score > hiscore
+					winner.clear
+					winner.push(player.name)
+					hiscore = score
+				elsif score == hiscore
+					winner.push(player.name)
+				end
+			end
+		end
+
+		puts "#{winner} WIN"
+		puts ''
+		continue?
+	end
+
+	def continue?
+		puts 'continue? (1:yes, 2:no) :[1]'
+		if gets.chomp.to_i == 2
+			exit 0
+		else
+			initialize
+		end
+	end
 
 end
 
-# puts "NEW GAME"
-# Game.new
+Game.new
