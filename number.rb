@@ -1,17 +1,17 @@
 class Player
 	attr_accessor :name
-  def initialize(name)
+	def initialize(name)
 		@cards = Array.new
 		@name = name
-  end
+	end
 
-  def add(card)
+	def add(card)
 		@cards.push(card)
-  end
+	end
 
-  def reset
-    @cards = Array.new
-  end
+	def reset
+		@cards.clear
+	end
 
 	def show_card_sum
 		card_sum = 0
@@ -45,14 +45,14 @@ class Player
 		@cards
 	end
 
-  def judge
+	def judge
 		sum = show_card_sum.to_i
-    if sum > 21
-      'BURST'
-    else
-      'SAFE'
-    end
-  end
+		if sum > 21
+			'BURST'
+		else
+			'SAFE'
+		end
+	end
 end
 
 class Deck
@@ -80,13 +80,13 @@ end
 
 
 class Game
-  def initialize
+	def initialize
 		@deck = Deck.new
-    @player = Player.new("YOU")
-    @master = Player.new("DEA")
+		@player = Player.new("YOU")
+		@master = Player.new("DEA")
 		@players = Array[@player, @master]
-    title
-  end
+		title
+	end
 
 	def clear_disp
 		print "\033[2J"
@@ -119,13 +119,13 @@ class Game
 		EOS
 
 		puts 'PRESS ANY KEY TO START'
-    if gets
+		if gets
 			clear_disp
 			start
 		end
 	end
 
-  def start
+	def start
 		puts '-----------------------------'
 		puts 'カード配布'
 		puts '-----------------------------'
@@ -139,8 +139,8 @@ class Game
 			puts '-----------------------------'
 			puts 'プレイヤーのターン'
 			puts '-----------------------------'
-	    puts "#{@master.name}:[#{@master.show_card(0)}, *]"
-    	puts "#{@player.name}:#{@player.show_card_all}(#{@player.show_card_sum})"
+			puts "#{@master.name}:[#{@master.show_card(0)}, *]"
+			puts "#{@player.name}:#{@player.show_card_all}(#{@player.show_card_sum})"
 			puts ''
 			puts 'hit or stay? (1:hit, 2:stay) :[2]'
 			cmd = gets.chomp.to_i
@@ -161,8 +161,8 @@ class Game
 			puts '-----------------------------'
 			puts 'ディーラーのターン'
 			puts '-----------------------------'
-	    puts "#{@master.name}:#{@master.show_card_all}(#{@master.show_card_sum})"
-    	puts "#{@player.name}:#{@player.show_card_all}(#{@player.show_card_sum})"
+			puts "#{@master.name}:#{@master.show_card_all}(#{@master.show_card_sum})"
+			puts "#{@player.name}:#{@player.show_card_all}(#{@player.show_card_sum})"
 			if @master.show_card_sum.to_i <= 16
 				@master.add(@deck.hit)
 				puts "[info] #{@master.name}は#{@master.show_card}のカードを引きました"
