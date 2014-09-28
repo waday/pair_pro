@@ -72,7 +72,7 @@ class Deck
 		end
 		@cards.shuffle!
 	end
-  def hit
+	def hit
 		card = @cards.shift
 		card
   end
