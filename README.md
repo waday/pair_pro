@@ -1,4 +1,4 @@
-https://circleci.com/gh/waday/pair_pro.svg?style=shield&circle-token=:circle-token
+https://circleci.com/gh/waday/pair_pro/tree/test.svg?style=shield&circle-token=:circle-token
        　　　　―＼＼＼＼＼
        　　―　　　　　　　　　｀｀
        　／　　　　　　　　　　　　 ＼
