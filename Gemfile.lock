@@ -6,7 +6,7 @@ GEM
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
       rspec-mocks (~> 3.1.0)
-    rspec-core (3.1.4)
+    rspec-core (3.1.5)
       rspec-support (~> 3.1.0)
     rspec-expectations (3.1.2)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -19,4 +19,4 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  rspec
+  rspec (= 3.1.0)
