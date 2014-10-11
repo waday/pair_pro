@@ -1,5 +1,6 @@
 ![test_result](https://circleci.com/gh/waday/pair_pro/tree/master.svg?style=shield&circle-token=:circle-token)
 
+
 ```
        　　　　―＼＼＼＼＼
        　　―　　　　　　　　　｀｀
@@ -19,4 +20,10 @@
  | |_) | |___ / ___ \ |___| . \ |_| / ___ \ |___| . \ 
  |____/|_____/_/   \_\____|_|\_\___/_/   \_\____|_|\_\
                                                       
+```
+
+# ゲームの起動
+
+```
+$ ruby game.rb
 ```
