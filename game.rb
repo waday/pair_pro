@@ -1,83 +1,6 @@
-class Player
-	attr_accessor :name
-	def initialize(name)
-		@cards = Array.new
-		@name = name
-	end
-
-	def add(card)
-		@cards.push(card)
-	end
-
-	def reset
-		@cards.clear
-	end
-
-	def show_card_sum
-		card_sum = 0
-		@cards.each do |card|
-	  	case card
-	  		when 'J','Q','K'
-	  	  	add_num = 10
-				when '1'
-		      if @sum + 11 > 21
-		        add_num = 1
-		      else
-		        add_num = 11
-		      end
-				else
-					add_num = card
-	  	end
-	    card_sum += add_num
-		end
-		card_sum
-	end
-
-	def show_card(num=-1)
-		if num.to_i == -1
-			@cards[(@cards.length.to_i - 1)]
-		else
-			@cards[num]
-		end
-	end
-
-	def show_card_all
-		@cards
-	end
-
-	def judge
-		sum = show_card_sum.to_i
-		if sum > 21
-			'BURST'
-		else
-			'SAFE'
-		end
-	end
-end
-
-class Deck
-	def initialize
-		@cards = Array.new
-		(1..10).each do |i|
-			@cards << i
-			@cards << i
-			@cards << i
-			@cards << i
-		end
-		Array['J','Q','K'].each do |i|
-			@cards << i
-			@cards << i
-			@cards << i
-			@cards << i
-		end
-		@cards.shuffle!
-	end
-	def hit
-		card = @cards.shift
-		card
-	end
-end
-
+#coding: utf-8
+require_relative 'lib/player'
+require_relative 'lib/deck'
 
 class Game
 	def initialize
@@ -175,19 +98,19 @@ class Game
 			check_burst @master
 		end
 
-		match @players
+		match
 
 	end
 
 	def check_burst(player)
-		if player.judge == 'BURST'
-			puts "BURST!\s#{@player.show_card_all}(#{@player.show_card_sum})\n#{player.name} LOSE"
+		if player.show_card_sum.to_i > 21
+			puts "BURST!\s#{player.show_card_all}(#{player.show_card_sum})\n#{player.name} LOSE"
 			puts ''
-			match @players
+			match
 		end
 	end
 
-	def match(player)
+	def match
 		puts '-----------------------------'
 		puts '勝敗結果'
 		puts '-----------------------------'

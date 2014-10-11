@@ -1,0 +1,13 @@
+require_relative '../lib/player'
+require_relative '../game'
+RSpec.describe "Game" do
+  before(:example) do
+    @player = Player.new
+    @player.add 5
+    @player.add 9
+    @player.add 'K'
+  end
+  it {
+    expect(Game.check_burst(@player)).to eq 
+  }
+end
