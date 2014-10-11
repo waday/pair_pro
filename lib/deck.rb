@@ -1,7 +1,7 @@
 class Deck
   def initialize
     @cards = Array.new
-    (2..9).each do |i|
+    (2..10).each do |i|
       @cards << i
       @cards << i
       @cards << i

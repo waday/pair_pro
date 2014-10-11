@@ -4,6 +4,6 @@ RSpec.describe "Deck" do
     @deck = Deck.new
   end
   it {
-    expect(@deck.hit).to be_between(1,9).inclusive | eq('A') | eq('J') | eq('Q') | eq('K')
+    expect(@deck.hit).to be_between(1,10).inclusive | eq('A') | eq('J') | eq('Q') | eq('K')
   }
 end

@@ -6,6 +6,10 @@ class Player
     @name = name
   end
   def add(card)
+    @sum += convert_num card
+    @cards.push(card)
+  end
+  def convert_num(card)
     case card 
       when 'J', 'Q', 'K'
         num = 10
@@ -15,10 +19,9 @@ class Player
       else
         num = card
     end
-    @sum += num
-    @cards.push(card)
+    num
   end
-  def show_card(num=0)
+  def show_card(num=-1)
     @cards[num]
   end
   def show_card_all
@@ -27,4 +30,21 @@ class Player
   def show_card_sum
     @sum
   end
+  def release_card
+    @cards = Array.new
+    @sum = 0
+  end
+  def burst?
+    if @sum > 21
+      true
+    else
+      false
+    end
+  end
+  def blackjack?
+    if @cards.length == 2 && @cards.include?('A')
+      return true if (@cards - ['J', 'Q', 'K', 10, 'A']).empty?
+    end
+    false
+  end 
 end

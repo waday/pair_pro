@@ -1,13 +1,14 @@
 #coding: utf-8
 require_relative 'lib/player'
+require_relative 'lib/dealer'
 require_relative 'lib/deck'
 
 class Game
 	def initialize
 		@deck = Deck.new
 		@player = Player.new("YOU")
-		@master = Player.new("DEA")
-		@players = Array[@player, @master]
+		@dealer = Dealer.new("DEA")
+		@players = Array[@player, @dealer]
 		title
 	end
 
@@ -54,18 +55,18 @@ class Game
 		puts '-----------------------------'
 		@player.add(@deck.hit)
 		@player.add(@deck.hit)
-		@master.add(@deck.hit)
-		@master.add(@deck.hit)
+		@dealer.add(@deck.hit)
+		@dealer.add(@deck.hit)
 
 		loop do
 			puts ''
 			puts '-----------------------------'
 			puts 'プレイヤーのターン'
 			puts '-----------------------------'
-			puts "#{@master.name}:[#{@master.show_card(0)}, *]"
+			puts "#{@dealer.name}:[#{@dealer.show_card(0)}, *]"
 			puts "#{@player.name}:#{@player.show_card_all}(#{@player.show_card_sum})"
 			puts ''
-			puts 'hit or stay? (1:hit, 2:stay) :[2]'
+			puts 'hit or stay? (1:hit, 2:stay) [2]:'
 			cmd = gets.chomp.to_i
 			if cmd == 1
 				@player.add(@deck.hit)
@@ -76,38 +77,41 @@ class Game
 				puts ''
 				break
 			end
-			check_burst @player
+			break if check_burst @player
 		end
 
 		loop do
+
 			puts ''
 			puts '-----------------------------'
 			puts 'ディーラーのターン'
 			puts '-----------------------------'
-			puts "#{@master.name}:#{@master.show_card_all}(#{@master.show_card_sum})"
+			puts "#{@dealer.name}:#{@dealer.show_card_all}(#{@dealer.show_card_sum})"
 			puts "#{@player.name}:#{@player.show_card_all}(#{@player.show_card_sum})"
-			if @master.show_card_sum.to_i <= 16
-				@master.add(@deck.hit)
-				puts "[info] #{@master.name}は#{@master.show_card}のカードを引きました"
+			if @dealer.should_hit?(@players)
+				@dealer.add(@deck.hit)
+				puts "[info] #{@dealer.name}は#{@dealer.show_card}のカードを引きました"
 				puts ''
 			else 
 				puts 'stay'
 				puts ''
 				break
 			end
-			check_burst @master
+			check_burst @dealer
 		end
 
 		match
+		continue
 
 	end
 
 	def check_burst(player)
-		if player.show_card_sum.to_i > 21
+		if player.burst?
 			puts "BURST!\s#{player.show_card_all}(#{player.show_card_sum})\n#{player.name} LOSE"
 			puts ''
-			match
+			return true
 		end
+    false
 	end
 
 	def match
@@ -115,28 +119,17 @@ class Game
 		puts '勝敗結果'
 		puts '-----------------------------'
 
-		hiscore=0
-		winner = Array.new
-		@players.each do |player|
-			score = player.show_card_sum
-			if score <= 21
-				if score > hiscore
-					winner.clear
-					winner.push(player.name)
-					hiscore = score
-				elsif score == hiscore
-					winner.push(player.name)
-				end
-			end
-		end
-
-		puts "#{winner} WIN"
+    winner = @dealer.tell_winner @players
+    if @players.length == winner.length || winner.length == 0
+		  puts "DRAW"
+		else
+      puts "#{winner} WIN"
+    end
 		puts ''
-		continue?
 	end
 
-	def continue?
-		puts 'continue? (1:yes, 2:no) :[1]'
+	def continue
+		puts 'continue? (1:yes, 2:no) [1]:'
 		if gets.chomp.to_i == 2
 			exit 0
 		else
